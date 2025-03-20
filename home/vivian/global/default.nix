@@ -17,7 +17,7 @@
   nix = {
     package = lib.mkDefault pkgs.nix;
     settings = {
-      experimental-features = [ "nix-command" "flakes" "repl-flake" ];
+      experimental-features = [ "nix-command" "flakes" ];
       warn-dirty = false;
     };
   };
@@ -29,12 +29,12 @@
   manual.manpages.enable = false;
 
   home = {
-    username = lib.mkDefault "neptune";
+    username = lib.mkDefault "vivian";
     homeDirectory = lib.mkDefault "/home/${config.home.username}";
-    stateVersion = lib.mkDefault "23.05";
+    stateVersion = lib.mkDefault "24.11";
     sessionPath = [ "$HOME/.local/bin" ];
     sessionVariables = {
-      FLAKE = "$HOME/underwater-communication-nix-config";
+      FLAKE = "$HOME/nix-config-hass";
     };
   };
 }

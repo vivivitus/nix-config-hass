@@ -1,9 +1,6 @@
 { inputs, outputs, ... }: {
   imports = [
     inputs.home-manager.nixosModules.home-manager
-    ./tools.nix
-    ./python.nix
-    ./gstreamer.nix
   ] ++ (builtins.attrValues outputs.nixosModules);
 
   home-manager.extraSpecialArgs = { inherit inputs outputs; };

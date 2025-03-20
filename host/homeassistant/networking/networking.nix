@@ -8,25 +8,20 @@
   };
 
   systemd.network.links."20-wlan" = {
-    matchConfig.PermanentMACAddress = "00:e0:4c:49:05:33";
+    matchConfig.PermanentMACAddress = "dc:a6:32:5b:08:4e";
     linkConfig.Name = "wlan";
   };
 
   systemd.network.links."30-eth" = {
-    matchConfig.PermanentMACAddress = "e4:5f:01:ea:b9:b7";
+    matchConfig.PermanentMACAddress = "dc:a6:32:5b:08:4d";
     linkConfig.Name = "ethernet";
-  };
-
-  systemd.network.links."40-eth" = {
-    matchConfig.PermanentMACAddress = "9c:eb:e8:12:bc:de";
-    linkConfig.Name = "ethernet_temp";
   };
 
   networking = {
     networkmanager.enable = true;
     networkmanager.unmanaged = ["wlan"];
 
-    hostName = "station";
+    hostName = "homeassistant";
     domain = "local";
     firewall.enable = false;
     resolvconf.dnsExtensionMechanism = false;
@@ -38,6 +33,18 @@
         prefixLength = 24;
       }
     ];
+  };
+
+  services.openssh = {
+    enable = true;
+    ports = [ 22 ];
+    settings = {
+      PasswordAuthentication = true;
+      AllowUsers = null; # Allows all users by default. Can be [ "user1" "user2" ]
+      UseDns = true;
+      X11Forwarding = false;
+      PermitRootLogin = "yes"; # "yes", "without-password", "prohibit-password", "forced-commands-only", "no"
+    };
   };
 
   # <hostname>.local resolution
@@ -57,15 +64,13 @@
   # Access Point configuration
   services.hostapd = {
     enable = true;
-    extraConfig = ''
-      ieee80211n=1
-      wmm_enabled=1
-      # ht_capab=[HT40+][SHORT-GI-20][SHORT-GI-40][SMPS-STATIC][DSSS_CCK-40][MAX-AMSDU-7935]
-    '';
-    interface = "wlan";
-    ssid = "station";
-    wpaPassphrase = "gaggigaggi";
-    countryCode = "CH";
+    radios.wlan = {
+      countryCode = "CH";
+      networks.wlan = {
+        ssid = "mess-o-mat";
+        authentication.saePasswords = [{ password = "gaggigaggi"; }];
+      };
+    };
   };
 
   #networking.firewall.allowedUDPPorts = lib.optionals config.services.hostapd.enable [53 67]; # DNS & DHCP
@@ -87,7 +92,7 @@
       bind-interfaces = true;
       domain-needed = true;
       dhcp-range = [ "172.16.1.100,172.16.1.254" ];
-      address= "/station.local/172.16.1.1";
+      address= "/mess-o-mat.local/172.16.1.1";
     };
   };
 
@@ -102,8 +107,6 @@
     ${iptables}/bin/iptables -A FORWARD -i wlan -o wwan -j ACCEPT
     ${iptables}/bin/iptables -t nat -A POSTROUTING -o ethernet -j MASQUERADE
     ${iptables}/bin/iptables -A FORWARD -i wlan -o ethernet -j ACCEPT
-    ${iptables}/bin/iptables -t nat -A POSTROUTING -o ethernet_temp -j MASQUERADE
-    ${iptables}/bin/iptables -A FORWARD -i wlan -o ethernet_temp -j ACCEPT
     '';
   };
 }

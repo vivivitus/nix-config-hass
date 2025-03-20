@@ -1,9 +1,8 @@
 { pkgs, config, lib, ... }:
 
 {
-  environment.noXlibs = lib.mkForce false;
   fileSystems."/" =
-    { device = "/dev/disk/by-label/NIXOS_SD";
+    { device = "/dev/disk/by-uuid/44444444-4444-4444-8888-888888888888";
       fsType = "ext4";
     };
 
@@ -13,16 +12,17 @@
   boot.kernel.sysctl."net.ipv4.conf.all.forwarding" = "1";
   boot.kernel.sysctl."net.ipv6.conf.all.forwarding" = "1";
 
-  # boot.extraModprobeConfig = ''
-  #   options bq27xxx_battery dt_monitored_battery_updates_nvm=0
-  # '';
-
   boot = {
-    extraModulePackages = [ config.boot.kernelPackages.rtl88xxau-aircrack ];
-    kernelPackages = lib.mkForce pkgs.linuxPackages_rpi4;
+    extraModulePackages = [ ];
+    kernelPackages = pkgs.linuxPackages_rpi4;
+    kernelModules = [ ];
+    initrd = {
+      availableKernelModules = [ "xhci_pci" ];
+      kernelModules = [ ];
+    };
     loader = {
-      generic-extlinux-compatible.enable = lib.mkDefault true;
-      grub.enable = lib.mkDefault false;
+      generic-extlinux-compatible.enable = true;
+      grub.enable = false;
     };
   };
 
