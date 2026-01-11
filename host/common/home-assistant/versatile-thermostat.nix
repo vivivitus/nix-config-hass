@@ -3,10 +3,15 @@
 buildHomeAssistantComponent rec {
   owner = "jmcollin78";
   domain = "versatile_thermostat";
-  version = "8.2.0";
+  version = "8.5.1";
 
   src = fetchzip {
     url = "https://github.com/jmcollin78/versatile_thermostat/archive/refs/tags/${version}.zip";
-    hash = "sha256-/5oHUnCnnw320kDhUIaqqHSzR54EUPnfixViAzTQeV0=";
+    hash = "sha256-zSpeiSK8FyXlM1U8jjSVl1nLQX/IplvKHfS6XZUNxo4=";
   };
+
+  dependencies = with home-assistant.python.pkgs; [
+    numpy
+    scipy
+  ];
 }

@@ -37,7 +37,7 @@
     customComponents = [
       #(pkgs.callPackage ./hacs.nix { })
       (pkgs.callPackage ./versatile-thermostat.nix { })
-      (pkgs.callPackage ./versatile-thermostat-ui-card.nix { })
+      #(pkgs.callPackage ./versatile-thermostat-ui-card.nix { })
       (pkgs.callPackage ./vzug.nix { })
       ];
     extraComponents = [
