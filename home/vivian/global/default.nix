@@ -3,7 +3,6 @@
 {
   imports = [
     ./cli.nix
-    ./git.nix
   ];
 
   nixpkgs = {

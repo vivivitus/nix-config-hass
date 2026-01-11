@@ -1,13 +1,14 @@
 { pkgs, inputs, ... }: {
   imports = [
-    inputs.hardware.nixosModules.common-cpu-intel
-    inputs.hardware.nixosModules.common-pc-ssd
+    inputs.nixos-hardware.nixosModules.common-cpu-intel
+    inputs.nixos-hardware.nixosModules.common-pc-ssd
 
-    ./storage.nix
     ./networking.nix
+    ./storage.nix
     ../common/global
+    ../common/home-assistant
+    #../common/home-assistant-container
     ../common/user/vivian
-    ../common/optional/ssh.nix
   ];
 
   programs.nix-ld.enable = true;

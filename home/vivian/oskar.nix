@@ -1,6 +1,8 @@
-{ lib, ... }:
-
 {
+  imports = [
+    ./global
+  ];
+
   programs.git = {
     enable = true;
     userName  = "vivivitus";

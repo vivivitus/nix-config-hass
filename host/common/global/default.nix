@@ -1,5 +1,8 @@
 { inputs, outputs, ... }: {
   imports = [
+    ./locales.nix
+    ./ssh-server.nix
+    ./timezone.nix
     inputs.home-manager.nixosModules.home-manager
   ] ++ (builtins.attrValues outputs.nixosModules);
 
