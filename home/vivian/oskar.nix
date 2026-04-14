@@ -5,11 +5,12 @@
 
   programs.git = {
     enable = true;
-    userName  = "vivivitus";
-    userEmail = "vivi_vitus@hotmail.com";
+    settings.user = {
+      name  = "vivivitus";
+      email = "vivi_vitus@hotmail.com";
+    };
   };
 
-  programs.ssh.enable = true;
   programs.ssh.matchBlocks = {
     "github.com" = {
       hostname = "github.com";

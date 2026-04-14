@@ -1,47 +1,32 @@
 { config, pkgs, lib, ... }:
 
 {
-  #networking.firewall.allowedTCPPorts = [ 8123 1883 ];
-  networking.firewall.enable = false;
+  imports = [
+   # ./postgres.nix
+    ./zigbee2mqtt.nix
+   # ./open3e.nix
+   # ./config/versatile-thermostat.nix
+  ];
 
-  services.mosquitto = {
-    enable = true;
-    logType = [ "all" ];
-    listeners = [
-      {
-        acl = [ "pattern readwrite #" ];
-        omitPasswordAuth = true;
-        settings.allow_anonymous = true;
-      }
-    ];
-  };
-
-  services.zigbee2mqtt = {
-    enable = true;
-    package = pkgs.zigbee2mqtt_2;
-    settings = {
-      homeassistant.enabled = config.services.home-assistant.enable;
-      mqtt.server = "mqtt://localhost:1883";
-      serial = {
-        port = "/dev/serial/by-id/usb-ITEAD_SONOFF_Zigbee_3.0_USB_Dongle_Plus_V2_20230807090832-if00";
-        adapter = "ember";
-      };
-      frontend.enabled = true;
-    };
-  };
+  networking.firewall.enable = true;
+  networking.firewall.allowedTCPPorts = [ 8123 ];
 
   services.home-assistant = {
-    # configWritable = true;
-    # lovelaceConfigWritable = true;
     enable = true;
+
+    customLovelaceModules = [
+      pkgs.home-assistant-custom-lovelace-modules.weather-chart-card
+    ];
+
     customComponents = [
-      #(pkgs.callPackage ./hacs.nix { })
-      (pkgs.callPackage ./versatile-thermostat.nix { })
-      #(pkgs.callPackage ./versatile-thermostat-ui-card.nix { })
-      (pkgs.callPackage ./vzug.nix { })
-      ];
+      pkgs.home-assistant-custom-components.moonraker
+      (pkgs.callPackage ./packages/versatile-thermostat.nix { })
+      (pkgs.callPackage ./packages/vzug.nix { })
+      (pkgs.callPackage ./packages/cafe.nix { })
+      (pkgs.callPackage ./packages/tuya-local.nix { })
+    ];
+
     extraComponents = [
-      # Components required to complete the onboarding
       "esphome"
       "homeassistant_hardware"
       #"zha"
@@ -58,20 +43,48 @@
       "mqtt_json"
       "mqtt_room"
       "brother"
+      "met"
+      "caldav"
     ];
+
     config = {
-      default_config = {};
-      # default_config_exclude = {[
-      #   "energy"
-      # ]};
+
       automation = "!include automations.yaml";
-      #sensor = "!include sensor.yaml";
+      
       homeassistant = {
         name = "oskar";
         unit_system = "metric";            
         time_zone = "Europe/Zurich";
         country = "CH";
+        latitude = 47.354336;
+        longitude = 8.724723;
+        elevation = 487;
+        language = "de";
       };
+
+      assist_pipeline = {};
+      backup = {};
+      bluetooth = {};
+      config = {};
+      conversation = {};
+      dhcp = {};
+      #energy = {};
+      #go2rtc = {};
+      history = {};
+      homeassistant_alerts = {};
+      #cloud = {};
+      image_upload = {};
+      logbook = {};
+      #media_source = {};
+      mobile_app = {};
+      my = {};
+      ssdp = {};
+      stream = {};
+      sun = {};
+      usage_prediction = {};
+      usb = {};
+      webhook = {};
+      zeroconf = {};
     };
   };
 }
